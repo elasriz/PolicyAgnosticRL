@@ -24,18 +24,20 @@ module purge
 module load miniforge/24.9.0
 module load git
 module load cuda/12.8.0
+module load cudnn/9.2-v7.5.1.10
+module load nccl/2.4.2-1+cuda9.2
 
-conda activate parl2
+conda activate parl
 
-python -c "import jax; print(jax.devices())"
 
-export CUDA_HOME=$CUDA_ROOT
+export CUDA_HOME=${CUDA_HOME:-$CUDA_ROOT}
+export CUDA_ROOT=${CUDA_ROOT:-$CUDA_HOME}
 export PATH=$CUDA_HOME/bin:$PATH
 
-# libs pip en priorité
+# ✅ cuDNN / libs pip d'abord
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib/python3.11/site-packages/nvidia/cudnn/lib:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CUDA_HOME/lib64
 
 # XLA/JAX
 export XLA_FLAGS="--xla_gpu_cuda_data_dir=$CUDA_HOME \
